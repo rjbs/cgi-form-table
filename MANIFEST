@@ -11,3 +11,4 @@ t/pod-coverage.t
 t/pod.t
 t/make_table.t
 t/read_table.t
+t/perl-critic.t
