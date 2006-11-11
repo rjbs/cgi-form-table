@@ -10,13 +10,13 @@ CGI::Form::Table - create a table of form inputs
 
 =head1 VERSION 
 
-version 0.16
+version 0.161
 
- $Id: Table.pm,v 1.21 2005/03/08 18:44:50 rjbs Exp $
+ $Id$
 
 =cut
 
-our $VERSION = '0.16';
+our $VERSION = '0.161';
 
 =head1 SYNOPSIS
 
@@ -54,14 +54,14 @@ form.
 Instead of C<initial_rows>, you can pass C<initial_values>, a reference to an
 array of hashes providing values for the columns of each row.  For example:
 
-	my $table = CGI::Form::Table->new(
-		prefix  => "charsheet",
-		columns => [ qw(ability score) ],
-		initial_values => [
-			{ ability => 'Str', score => '18/00' },
-			{ ability => 'Cha', score => '11'    }
-		]
-	);
+ my $table = CGI::Form::Table->new(
+  prefix  => "charsheet",
+  columns => [ qw(ability score) ],
+  initial_values => [
+   { ability => 'Str', score => '18/00' },
+   { ability => 'Cha', score => '11'    }
+  ]
+ );
 
 C<column_header>, if passed, is a hash of text strings to use as column
 headers.  The keys are column names.  Columns without C<column_header> entries
@@ -88,13 +88,13 @@ updating the name attribute.)
 =cut
 
 sub new {
-	my ($class, %arg) = @_;
-	return unless $arg{columns};
-	return unless $arg{prefix};
-	$arg{initial_rows} = 1 unless $arg{initial_rows};
-	$arg{initial_rows} = @{$arg{initial_values}}
-		if ($arg{initial_values} && @{$arg{initial_values}} > $arg{initial_rows});
-	bless \%arg => $class;
+ my ($class, %arg) = @_;
+ return unless $arg{columns};
+ return unless $arg{prefix};
+ $arg{initial_rows} = 1 unless $arg{initial_rows};
+ $arg{initial_rows} = @{$arg{initial_values}}
+  if ($arg{initial_values} && @{$arg{initial_values}} > $arg{initial_rows});
+ bless \%arg => $class;
 }
 
 =head2 C<< $form->as_html >>
@@ -105,51 +105,51 @@ the form expandible/shrinkable; see the C<javascript> method.  (L</"SEE ALSO">)
 =cut
 
 sub as_html {
-	my ($self) = @_;
-	my $prefix = $self->{prefix};
+ my ($self) = @_;
+ my $prefix = $self->{prefix};
 
-	my $column_headers = join '',
-		map { "\t\t\t<th class='input_column'>" . $self->column_header($_) . "</th>\n" }
-		@{$self->{columns}};
+ my $column_headers = join q{},
+  map { "\t\t\t<th class='input_column'>" . $self->column_header($_) . "</th>\n" }
+  @{$self->{columns}};
 
-	my $html = <<EOH;
+ my $html = <<"EOH";
 <table class='cft $prefix'>
-	<thead>
-		<tr>
-			<td class='row_number'></td>
-			<td class='add button'></td>
-			<td class='delete button'></td>
+ <thead>
+  <tr>
+   <td class='row_number'></td>
+   <td class='add button'></td>
+   <td class='delete button'></td>
 $column_headers
-			<td class='row_number'></td>
-		</tr>
-	</thead>
+   <td class='row_number'></td>
+  </tr>
+ </thead>
 
-	<tbody>
+ <tbody>
 EOH
 
-	for my $row_number (1 .. $self->{initial_rows}) {
-		my $content = join '',
-			map { "<td class='input_column'>" . $self->cell_content($row_number, $_) . "</td>" }
-			@{$self->{columns}};
+ for my $row_number (1 .. $self->{initial_rows}) {
+  my $content = join q{},
+   map { "<td class='input_column'>" . $self->cell_content($row_number, $_) . "</td>" }
+   @{$self->{columns}};
 
-		$html .= <<EOH;
-		<tr>
-			<td class='row_number'>$row_number</td>
-			<td class='add button'>
-		  	<input type='button' onClick='cloneParentOf(this.parentNode, "$prefix")' value='+' />
-		  </td>
-		  <td class='delete button'>
-				<input type='button' onClick='removeParentOf(this.parentNode, "$prefix")' value='-' />
-			</td>
-			$content
-			<td class='row_number'>$row_number</td>
-		</tr>
+  $html .= <<"EOH";
+  <tr>
+   <td class='row_number'>$row_number</td>
+   <td class='add button'>
+     <input type='button' onClick='cloneParentOf(this.parentNode, "$prefix")' value='+' />
+    </td>
+    <td class='delete button'>
+    <input type='button' onClick='removeParentOf(this.parentNode, "$prefix")' value='-' />
+   </td>
+   $content
+   <td class='row_number'>$row_number</td>
+  </tr>
 EOH
-	}
-	$html .= "\t</tbody>\n";
-	$html .= "</table>\n";
+ }
+ $html .= "\t</tbody>\n";
+ $html .= "</table>\n";
 
-	return $html;
+ return $html;
 }
 
 =head2 C<< $form->column_header($column_name) >>
@@ -162,8 +162,8 @@ named column actually exists.)
 =cut
 
 sub column_header {
-	my ($self, $name) = @_;
-	defined $self->{column_header}{$name} ? $self->{column_header}{$name} : $name;
+ my ($self, $name) = @_;
+ defined $self->{column_header}{$name} ? $self->{column_header}{$name} : $name;
 }
 
 =head2 C<< $form->cell_content($row, $column_name) >>
@@ -175,13 +175,13 @@ element is generated.
 =cut
 
 sub cell_content {
-	my ($self, $row, $name) = @_;
+ my ($self, $row, $name) = @_;
 
-	my $content_generator =
-		$self->{column_content}{$name}
-		? $self->{column_content}{$name}
-		: $self->_input;
-	return $content_generator->($self, $row, $name);
+ my $content_generator =
+  $self->{column_content}{$name}
+  ? $self->{column_content}{$name}
+  : $self->_input;
+ return $content_generator->($self, $row, $name);
 }
 
 # $form->_select(\@pairs, \%arg)
@@ -189,35 +189,35 @@ sub cell_content {
 # given a ref to a list of two-element arrayrefs (value, text), returns a
 # coderef to produce a select element via column_content
 sub _select {
-	my ($self, $pairs, $arg) = @_;
-	sub {
-		my ($self, $row, $name) = @_;
-		my $content  = "<select name='$self->{prefix}_${row}_$name'";
-		   $content .= " $_='$arg->{$_}'" for keys %$arg;
-		   $content .= ">";
-		my $value   = $self->cell_value($row, $name);
-		for (@$pairs) {
-			$content .= "<option value='$_->[0]'"
-				. (($value && $_->[0] && $value eq $_->[0]) ? " selected='selected'" : '')
-				. ">$_->[1]</option>\n";
-		}
-		$content .= "</select>\n";
-		return $content;
-	}
+ my ($self, $pairs, $arg) = @_;
+ sub {
+  my ($self, $row, $name) = @_;
+  my $content  = "<select name='$self->{prefix}_${row}_$name'";
+     $content .= " $_='$arg->{$_}'" for keys %$arg;
+     $content .= ">";
+  my $value   = $self->cell_value($row, $name);
+  for (@$pairs) {
+   $content .= "<option value='$_->[0]'"
+    . (($value && $_->[0] && $value eq $_->[0]) ? " selected='selected'" : q{})
+    . ">$_->[1]</option>\n";
+  }
+  $content .= "</select>\n";
+  return $content;
+ }
 }
 
 # $form->_input(\%arg)
 #
 # returns a coderef to produce an input element via column_content
 sub _input {
-	my ($self, $arg) = @_;
-	$arg ||= {};
-	sub {
-		my ($self, $row, $name) = @_;
-		return "<input " . ($arg->{type} ? "type='$arg->{type}'" : '')
-			. "name='$self->{prefix}_${row}_$name' value='"
-			. ($self->cell_value($row,$name) || '') . "' />";
-	}
+ my ($self, $arg) = @_;
+ $arg ||= {};
+ sub {
+  my ($self, $row, $name) = @_;
+  return "<input " . ($arg->{type} ? "type='$arg->{type}'" : q{})
+   . "name='$self->{prefix}_${row}_$name' value='"
+   . ($self->cell_value($row,$name) || q{}) . "' />";
+ }
 }
 
 =head2 C<< $form->cell_value($row, $column_name) >>
@@ -228,9 +228,9 @@ the C<initial_values> passed to the initializer.
 =cut
 
 sub cell_value {
-	my ($self, $row, $column_name) = @_;
-	return unless defined $self->{initial_values}[--$row];
-	return $self->{initial_values}[$row]{$column_name};
+ my ($self, $row, $column_name) = @_;
+ return unless defined $self->{initial_values}[--$row];
+ return $self->{initial_values}[$row]{$column_name};
 } 
 
 =head2 C<< $class->javascript >>
@@ -242,44 +242,44 @@ browsers.
 =cut
 
 sub javascript {
-	my $self = shift;
+ my $self = shift;
 return <<"EOS";
-	function removeParentOf(child, prefix) {
-		tbody = child.parentNode.parentNode;
-		if (tbody.rows.length > 1)
-			tbody.removeChild(child.parentNode);
-		renumberRows(tbody, prefix);
-	}
-	function cloneParentOf(child, prefix) {
-		clone = child.parentNode.cloneNode( true );
-		tbody = child.parentNode.parentNode;
-		tbody.insertBefore( clone, child.parentNode.nextSibling );
-		renumberRows(tbody, prefix);
-	}
-	function renumberRows(tbody, prefix) {
-		var rowList = tbody.rows;
-		for (i = 0; i < rowList.length; i++) {
-			rowNumber = rowList.length - i;
-			rowList[i].cells[0].firstChild.nodeValue = rowNumber;
-			for (j = 0; j < rowList[i].cells.length; j++) {
-				prefix_pattern = new RegExp('^' + prefix + '_\\\\d+_');
+function removeParentOf(child, prefix) {
+  tbody = child.parentNode.parentNode;
+  if (tbody.rows.length > 1)
+    tbody.removeChild(child.parentNode);
+  renumberRows(tbody, prefix);
+}
+function cloneParentOf(child, prefix) {
+  clone = child.parentNode.cloneNode( true );
+  tbody = child.parentNode.parentNode;
+  tbody.insertBefore( clone, child.parentNode.nextSibling );
+  renumberRows(tbody, prefix);
+}
+function renumberRows(tbody, prefix) {
+  var rowList = tbody.rows;
+  for (i = 0; i < rowList.length; i++) {
+    rowNumber = rowList.length - i;
+    rowList[i].cells[0].firstChild.nodeValue = rowNumber;
+    for (j = 0; j < rowList[i].cells.length; j++) {
+      prefix_pattern = new RegExp('^' + prefix + '_\\\\d+_');
 
-				element_types = ['button', 'input', 'select', 'textarea'];
-				for (type in element_types) {
-					inputs = rowList[i].cells[j].getElementsByTagName(element_types[type]);
-					for (k = 0; k < inputs.length; k++) {
-						if (inputs[k].name.match(prefix_pattern))
-							inputs[k].name = inputs[k].name.replace(
-								prefix_pattern,
-								prefix + "_" + rowNumber + "_"
-							);
-					}
-				}
-			}
-			var cell_count = rowList[i].cells.length;
-			rowList[i].cells[cell_count - 1].firstChild.nodeValue = rowNumber;
-		}
-	}
+      element_types = ['button', 'input', 'select', 'textarea'];
+      for (type in element_types) {
+        inputs = rowList[i].cells[j].getElementsByTagName(element_types[type]);
+        for (k = 0; k < inputs.length; k++) {
+          if (inputs[k].name.match(prefix_pattern))
+            inputs[k].name = inputs[k].name.replace(
+                prefix_pattern,
+                prefix + "_" + rowNumber + "_"
+                );
+        }
+      }
+    }
+    var cell_count = rowList[i].cells.length;
+    rowList[i].cells[cell_count - 1].firstChild.nodeValue = rowNumber;
+  }
+}
 EOS
 
 }

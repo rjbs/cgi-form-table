@@ -1,5 +1,9 @@
 Revision history for CGI-Form-Table
 
+0.161   2006-11-10
+        some code cleanup
+        packaging improvements
+
 0.16    2005-03-08
         better test coverage
         document initial_values argument

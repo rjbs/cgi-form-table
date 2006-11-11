@@ -4,7 +4,7 @@ package CGI::Form::Table::Reader;
 use strict;
 use warnings;
 
-our $VERSION = '0.12';
+our $VERSION = '0.161';
 
 =head1 NAME
 
@@ -12,9 +12,9 @@ CGI::Form::Table::Reader - read a table of form inputs
 
 =head1 VERSION 
 
-version 0.12
+version 0.161
 
- $Id: Reader.pm,v 1.4 2004/10/22 17:19:47 rjbs Exp $
+ $Id$
 
 =head1 SYNOPSIS
 
@@ -65,7 +65,7 @@ sub _read_row {
 	my $row_prefix = $self->{prefix} . '_' . $position . '_';
 
 	my %row;
-	for (grep /^$row_prefix/, $self->{query}->param) {
+	for (grep { /^$row_prefix/ } $self->{query}->param) {
 		(my $name = $_) =~ s/^$row_prefix//;
 		$row{$name} = $self->{query}->param($_);
 	}
@@ -84,7 +84,7 @@ sub _read_positions {
 	my @positions =
 		sort { $a <=> $b }
 		grep { ! $temp{0+$_} ++ }
-		map  /^$self->{prefix}_(\d+)_/,
+		map  { /^$self->{prefix}_(\d+)_/; },
 		$self->{query}->param;
 }
 
