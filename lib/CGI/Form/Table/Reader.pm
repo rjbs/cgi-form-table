@@ -84,7 +84,7 @@ sub _read_positions {
 	my @positions =
 		sort { $a <=> $b }
 		grep { ! $temp{0+$_} ++ }
-		map  { /^$self->{prefix}_(\d+)_/; },
+		map  { /^$self->{prefix}_(\d+)_/; }
 		$self->{query}->param;
 }
 
